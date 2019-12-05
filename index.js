@@ -36,6 +36,19 @@ app.get('/api/users/:id', (req, res) => {
     .catch(err => res.status(404).json({ message: "The user with the specified ID does not exist." }))
 })
 
+// PUT A USER, (EDIT)
+app.put('/api/users/:id', (req, res) => {
+  if (!req.body.name || !req.body.bio) {
+    res.status(400).json({ errorMessage: "Please provide name and bio for the user."})
+  } else if (!req.params.id) {
+    res.status(404).json({errorMessage: "The user with the specified ID does not exist." })
+  } else {
+    db.update(req.params.id, req.body)
+      .then(user => res.status(200).json({ numberOfUsersUpdated: user, message: `User ID: ${req.params.id} updated successfully.`}))
+      .catch(err => res.status(500).json({ message: "An error occurred with the server. Please try again." }))
+  }
+})
+
 // DELETE A USER BY ID
 app.delete('/api/users/:id', (req, res) => {
   db.remove(req.params.id)
